@@ -27,7 +27,12 @@ abalone_categorized = abalone
 
 abalone_categorized['Type'] = pd.Categorical(abalone_categorized['Type']) # make string categorical
 
-abalone_categorized['island']  = abalone_categorized['island'].cat.codes # make values numerical
+abalone_categorized['Type']  = abalone_categorized['Type'].cat.codes # make values numerical
+
+# i am just going to save the .csv's and take a look that the changes are looking okay
+penguins_oneHot.to_csv()
+penguins_manual.to_csv()
+abalone_categorized.to_csv()
 
 
 
