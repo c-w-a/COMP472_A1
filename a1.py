@@ -4,12 +4,13 @@
 # TEAM MEMBERS:
 
 import pandas as pd
-import sklearn 
+import sklearn
 import matplotlib
 
+
 # read the .csv files in
-penguins = pd.read_csv('penguins.csv')
-abalone = pd.read_csv('abalone.csv')
+penguins = pd.read_csv('COMP472_A1/penguins.csv')
+abalone = pd.read_csv('COMP472_A1/abalone.csv')
 
 # do the one-hot encoding for penguins
 penguins_onehot = pd.get_dummies(penguins, columns=['island','sex'])
