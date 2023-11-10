@@ -70,6 +70,7 @@ abalone_labels = abalone_categorized['Type']
 xtrain_abalone, xtest_abalone, ytrain_abalone, ytest_abalone = ms.train_test_split(abalone_features, abalone_labels)
 
 # (4a) base-DT:
+# penguin
 # create the decision tree classifier
 decision_tree_classifier_penguins = tree.DecisionTreeClassifier()
 # fit the training data :)
@@ -78,3 +79,13 @@ decision_tree_classifier_penguins.fit(xtrain_penguin, ytrain_penguin)
 # plot the tree
 tree.plot_tree(decision_tree_classifier_penguins, feature_names = xtrain_penguin.columns)
 plt.savefig('penguin_basicDT.png')
+
+# abalone
+# create a decision tree classifier
+decision_tree_classifier_abalone = tree.DecisionTreeClassifier()
+# fit the training data :)
+decision_tree_classifier_abalone.fit(xtrain_abalone, ytrain_abalone)
+
+# plot the tree
+tree.plot_tree(decision_tree_classifier_abalone, feature_names = xtrain_abalone.columns)
+plt.savefig('abalone_basicDT.png')
