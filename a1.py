@@ -8,8 +8,12 @@ import sklearn
 import matplotlib
 
 # read the .csv files in
-pd.read_csv('penguins.csv')
-pd.read_csv('abalone.csv')
+penguins = pd.read_csv('penguins.csv')
+abalone = pd.read_csv('abalone.csv')
+
+
+
+
 
 
 
