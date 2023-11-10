@@ -12,7 +12,7 @@ penguins = pd.read_csv('penguins.csv')
 abalone = pd.read_csv('abalone.csv')
 
 # do the one-hot encoding for penguins
-penguins_oneHot = pd.get_dummies(penguins, columns=['island','sex'])
+penguins_onehot = pd.get_dummies(penguins, columns=['island','sex'])
 
 # do the manual categorization for penguins
 penguins_manual = penguins
@@ -30,9 +30,9 @@ abalone_categorized['Type'] = pd.Categorical(abalone_categorized['Type']) # make
 abalone_categorized['Type']  = abalone_categorized['Type'].cat.codes # make values numerical
 
 # i am just going to save the .csv's and take a look that the changes are looking okay
-penguins_oneHot.to_csv()
-penguins_manual.to_csv()
-abalone_categorized.to_csv()
+penguins_onehot.to_csv('penguins_onehot.csv')
+penguins_manual.to_csv('penguins_manual.csv')
+abalone_categorized.to_csv('abelone_categorized.csv')
 
 
 
