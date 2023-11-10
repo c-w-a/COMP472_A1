@@ -7,6 +7,7 @@ import pandas as pd
 import sklearn
 import matplotlib
 from sklearn.neural_network import MLPClassifier
+from sklearn.metrics import accuracy_score
 
 
 # read the .csv files in
@@ -50,10 +51,11 @@ abalone_labels = abalone_categorized['Type']
 xtrain_abalone, xtest_abalone, ytrain_abalone, ytest_abalone = sklearn.model_selection.train_test_split(abalone_features, abalone_labels)
 
 
+#BASE-MLP
+mlp = MLPClassifier(hidden_layer_sizes=(100, 100), activation = 'logistic', solver = 'sgd', max_iter = 15000)
+mlp.fit(xtrain_abalone, ytrain_abalone)
+prediction = mlp.predict(xtest_abalone)
 
-
-# #BASE-MLP
-# mlp = MLPClassifier(hidden_layer_sizes=(100, 100), activation = 'logistic', solver = 'sgd')
-# mlp.fit(xtrain_abalone, ytrain_abalone)
-# prediction = mlp.predict(xtest_abalone)
+accuracy = accuracy_score(ytest_abalone, prediction)
+print("Accuracy:", accuracy)
 
