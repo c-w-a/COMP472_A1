@@ -83,12 +83,6 @@ tree.plot_tree(decision_tree_classifier_penguins, feature_names = xtrain_penguin
 plt.savefig('penguin_basicDT.png')
 plt.show()
 
-
-# #BASE-MLP
-# mlp = MLPClassifier(hidden_layer_sizes=(100, 100), activation = 'logistic', solver = 'sgd')
-# mlp.fit(xtrain_abalone, ytrain_abalone)
-# prediction = mlp.predict(xtest_abalone)
-
 # abalone
 # create a decision tree classifier
 decision_tree_classifier_abalone = tree.DecisionTreeClassifier()
@@ -98,3 +92,8 @@ decision_tree_classifier_abalone.fit(xtrain_abalone, ytrain_abalone)
 # plot the tree (i tried some different max depths to get a legible looking tree, kind of cool just to see the full tree though)
 tree.plot_tree(decision_tree_classifier_abalone, feature_names = xtrain_abalone.columns)
 plt.savefig('abalone_basicDT.png')
+
+# #BASE-MLP
+mlp = MLPClassifier(hidden_layer_sizes=(100, 100), activation = 'logistic', solver = 'sgd')
+mlp.fit(xtrain_abalone, ytrain_abalone)
+prediction = mlp.predict(xtest_abalone)
