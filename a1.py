@@ -86,6 +86,6 @@ decision_tree_classifier_abalone = tree.DecisionTreeClassifier()
 # fit the training data :)
 decision_tree_classifier_abalone.fit(xtrain_abalone, ytrain_abalone)
 
-# plot the tree
+# plot the tree (i tried some different max depths to get a legible looking tree, kind of cool just to see the full tree though)
 tree.plot_tree(decision_tree_classifier_abalone, feature_names = xtrain_abalone.columns)
 plt.savefig('abalone_basicDT.png')
