@@ -34,6 +34,19 @@ penguins_onehot.to_csv('penguins_onehot.csv')
 penguins_manual.to_csv('penguins_manual.csv')
 abalone_categorized.to_csv('abelone_categorized.csv')
 
+# split datasets up for training and test:
+# penguin 
+penguin_features = penguins_onehot.drop('species')  
+penguin_labels = penguins_onehot['species']
+
+xtrain_penguin, xtest_penguin, ytrain_penguin, ytest_penguin = sklearn.model_selection.train_test_split(penguin_features, penguin_labels)
+
+# abalone
+abalone_features = abalone_categorized.drop('sex')  
+abalone_labels = abalone_categorized['sex']
+
+xtrain_abalone, xtest_abalone, ytrain_abalone, ytest_abalone = sklearn.model_selection.train_test_split(abalone_features, abalone_labels)
+
 
 
 
