@@ -4,6 +4,8 @@
 
 import pandas as pd
 import sklearn
+import sklearn.model_selection as ms
+import sklearn.tree as tree
 import matplotlib.pyplot as plt
 from sklearn.neural_network import MLPClassifier
 
@@ -61,23 +63,29 @@ penguin_features = penguins_onehot.drop('species', axis = 1)
 
 penguin_labels = penguins_onehot['species']
 
-xtrain_penguin, xtest_penguin, ytrain_penguin, ytest_penguin = sklearn.model_selection.train_test_split(penguin_features, penguin_labels)
+xtrain_penguin, xtest_penguin, ytrain_penguin, ytest_penguin = ms.train_test_split(penguin_features, penguin_labels)
 
 # abalone
+<<<<<<< HEAD
 abalone_features = abalone_categorized.drop('Type', axis=1)  
+=======
+abalone_features = abalone_categorized.drop('Type', axis = 1)  
+>>>>>>> 6c16e3830ac08a228ecea6cc066cd6084816f6c6
 abalone_labels = abalone_categorized['Type']
 
-xtrain_abalone, xtest_abalone, ytrain_abalone, ytest_abalone = sklearn.model_selection.train_test_split(abalone_features, abalone_labels)
+xtrain_abalone, xtest_abalone, ytrain_abalone, ytest_abalone = ms.train_test_split(abalone_features, abalone_labels)
 
 # (4a) base-DT:
+# penguin
 # create the decision tree classifier
-decision_tree_classifier_penguins = sklearn.tree.DecisionTreeClassifier()
+decision_tree_classifier_penguins = tree.DecisionTreeClassifier()
 # fit the training data :)
 decision_tree_classifier_penguins.fit(xtrain_penguin, ytrain_penguin)
 
 # plot the tree
-plt.plot_tree(decision_tree_classifier_penguins, feature_names = xtrain_penguin.columns)
+tree.plot_tree(decision_tree_classifier_penguins, feature_names = xtrain_penguin.columns)
 plt.savefig('penguin_basicDT.png')
+<<<<<<< HEAD
 plt.show()
 
 
@@ -86,3 +94,15 @@ plt.show()
 # mlp.fit(xtrain_abalone, ytrain_abalone)
 # prediction = mlp.predict(xtest_abalone)
 
+=======
+
+# abalone
+# create a decision tree classifier
+decision_tree_classifier_abalone = tree.DecisionTreeClassifier()
+# fit the training data :)
+decision_tree_classifier_abalone.fit(xtrain_abalone, ytrain_abalone)
+
+# plot the tree (i tried some different max depths to get a legible looking tree, kind of cool just to see the full tree though)
+tree.plot_tree(decision_tree_classifier_abalone, feature_names = xtrain_abalone.columns)
+plt.savefig('abalone_basicDT.png')
+>>>>>>> 6c16e3830ac08a228ecea6cc066cd6084816f6c6
