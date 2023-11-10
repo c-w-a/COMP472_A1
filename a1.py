@@ -10,9 +10,19 @@ import sklearn
 import sklearn.model_selection as ms
 import sklearn.tree as tree
 import matplotlib.pyplot as plt
+<<<<<<< HEAD
 from sklearn.tree import DecisionTreeClassifier
 from sklearn.model_selection import GridSearchCV
 from sklearn import tree
+=======
+<<<<<<< HEAD
+from sklearn.tree import DecisionTreeClassifier
+from sklearn.model_selection import GridSearchCV
+from sklearn import tree
+=======
+from sklearn.neural_network import MLPClassifier
+>>>>>>> de7047601a8b1a159d3d8a07e6d462df63640a08
+>>>>>>> c2f45fb087c3fb78387815ea6dccaf2801010114
 
 # 1.
 # read the .csv files in
@@ -89,6 +99,7 @@ decision_tree_classifier_penguins.fit(xtrain_penguin, ytrain_penguin)
 # plot the tree
 tree.plot_tree(decision_tree_classifier_penguins, feature_names = xtrain_penguin.columns)
 plt.savefig('penguin_basicDT.png')
+<<<<<<< HEAD
 
 #(4b) Top-DT
 
@@ -113,4 +124,49 @@ tree.plot_tree(best_tree, filled=True)
 
 plt.savefig('best_decision_tree.png')
 plt.close()
+
+=======
+<<<<<<< HEAD
+
+#(4b) Top-DT
+
+#setting up parameter Grid
+parameter_grid={
+    'criterion': ['gini', 'entropy'],
+    'max_depth': [None, 10, 20], #just using 10, 20 to see the difference in values
+    'min_samples_split':[5, 10, 20]
+}
+
+#initializes the decision tree classifier
+dt = DecisionTreeClassifier()
+
+grid_search = GridSearchCV(dt, parameter_grid, cv=5, scoring = 'accuracy')
+
+grid_search.fit(xtrain_penguin, ytrain_penguin)
+
+best_tree = grid_search.best_estimator_
+
+plt.figure()
+tree.plot_tree(best_tree, filled=True)
+
+plt.savefig('best_decision_tree.png')
+plt.close()
+
+=======
+plt.show()
+
+# abalone
+# create a decision tree classifier
+decision_tree_classifier_abalone = tree.DecisionTreeClassifier()
+# fit the training data :)
+decision_tree_classifier_abalone.fit(xtrain_abalone, ytrain_abalone)
+
+# plot the tree (i tried some different max depths to get a legible looking tree, kind of cool just to see the full tree though)
+tree.plot_tree(decision_tree_classifier_abalone, feature_names = xtrain_abalone.columns)
+plt.savefig('abalone_basicDT.png')
+
+# BASE-MLP
+mlp = MLPClassifier(hidden_layer_sizes=(100, 100), activation = 'logistic', solver = 'sgd')
+mlp.fit(xtrain_abalone, ytrain_abalone)
+prediction = mlp.predict(xtest_abalone)
 
