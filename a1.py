@@ -1,6 +1,9 @@
 # A1 COMP472
 
 # TEAM MEMBERS:
+# Chris Anglin 40216346
+# Stefan Codrean
+# Daniele Comitogianni
 
 import pandas as pd
 import sklearn
@@ -9,7 +12,7 @@ import sklearn.tree as tree
 import matplotlib.pyplot as plt
 from sklearn.neural_network import MLPClassifier
 
-
+# 1.
 # read the .csv files in
 penguins = pd.read_csv('penguins.csv')
 abalone = pd.read_csv('abalone.csv')
@@ -37,6 +40,7 @@ penguins_onehot.to_csv('penguins_onehot.csv')
 penguins_manual.to_csv('penguins_manual.csv')
 abalone_categorized.to_csv('abelone_categorized.csv')
 
+# 2.
 # plotting the species percentage distribution for penguins
 penguins_species_counts = penguins_onehot['species'].value_counts(normalize=True)*100
 plt.figure()
@@ -56,6 +60,7 @@ plt.xticks(ticks=[0,1,2],labels=['Female','Infant','Male'])
 plt.ylabel('Percentages')
 plt.savefig('abalone-classes.png')
 
+# 3.
 # split datasets up for training and test:
 # penguin 
 
@@ -71,7 +76,8 @@ abalone_labels = abalone_categorized['Type']
 
 xtrain_abalone, xtest_abalone, ytrain_abalone, ytest_abalone = ms.train_test_split(abalone_features, abalone_labels)
 
-# (4a) base-DT:
+# 4.
+# base-DT:
 # penguin
 # create the decision tree classifier
 decision_tree_classifier_penguins = tree.DecisionTreeClassifier()
@@ -93,7 +99,7 @@ decision_tree_classifier_abalone.fit(xtrain_abalone, ytrain_abalone)
 tree.plot_tree(decision_tree_classifier_abalone, feature_names = xtrain_abalone.columns)
 plt.savefig('abalone_basicDT.png')
 
-# #BASE-MLP
+# BASE-MLP
 mlp = MLPClassifier(hidden_layer_sizes=(100, 100), activation = 'logistic', solver = 'sgd')
 mlp.fit(xtrain_abalone, ytrain_abalone)
 prediction = mlp.predict(xtest_abalone)
