@@ -1,5 +1,3 @@
-
-
 # A1 COMP472
 
 # TEAM MEMBERS:
