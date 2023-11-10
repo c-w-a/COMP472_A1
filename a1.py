@@ -9,6 +9,9 @@ import sklearn
 import sklearn.model_selection as ms
 import sklearn.tree as tree
 import matplotlib.pyplot as plt
+from sklearn.tree import DecisionTreeClassifier
+from sklearn.model_selection import GridSearchCV
+from sklearn import tree
 
 # read the .csv files in
 penguins = pd.read_csv('penguins.csv')
@@ -78,3 +81,28 @@ decision_tree_classifier_penguins.fit(xtrain_penguin, ytrain_penguin)
 # plot the tree
 tree.plot_tree(decision_tree_classifier_penguins, feature_names = xtrain_penguin.columns)
 plt.savefig('penguin_basicDT.png')
+
+#(4b) Top-DT
+
+#setting up parameter Grid
+parameter_grid={
+    'criterion': ['gini', 'entropy'],
+    'max_depth': [None, 10, 20], #just using 10, 20 to see the difference in values
+    'min_samples_split':[5, 10, 20]
+}
+
+#initializes the decision tree classifier
+dt = DecisionTreeClassifier()
+
+grid_search = GridSearchCV(dt, parameter_grid, cv=5, scoring = 'accuracy')
+
+grid_search.fit(xtrain_penguin, ytrain_penguin)
+
+best_tree = grid_search.best_estimator_
+
+plt.figure()
+tree.plot_tree(best_tree, filled=True)
+
+plt.savefig('best_decision_tree.png')
+plt.close()
+
