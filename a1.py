@@ -6,23 +6,13 @@
 # Daniele Comitogianni
 
 import pandas as pd
-import sklearn
 import sklearn.model_selection as ms
 import sklearn.tree as tree
 import matplotlib.pyplot as plt
-<<<<<<< HEAD
 from sklearn.tree import DecisionTreeClassifier
 from sklearn.model_selection import GridSearchCV
 from sklearn import tree
-=======
-<<<<<<< HEAD
-from sklearn.tree import DecisionTreeClassifier
-from sklearn.model_selection import GridSearchCV
-from sklearn import tree
-=======
 from sklearn.neural_network import MLPClassifier
->>>>>>> de7047601a8b1a159d3d8a07e6d462df63640a08
->>>>>>> c2f45fb087c3fb78387815ea6dccaf2801010114
 
 # 1.
 # read the .csv files in
@@ -77,16 +67,17 @@ plt.savefig('abalone-classes.png')
 # penguin 
 
 penguin_features = penguins_onehot.drop('species', axis = 1)  
-
 penguin_labels = penguins_onehot['species']
-
 xtrain_penguin, xtest_penguin, ytrain_penguin, ytest_penguin = ms.train_test_split(penguin_features, penguin_labels)
 
 # abalone
 abalone_features = abalone_categorized.drop('Type', axis=1)  
 abalone_labels = abalone_categorized['Type']
-
 xtrain_abalone, xtest_abalone, ytrain_abalone, ytest_abalone = ms.train_test_split(abalone_features, abalone_labels)
+
+
+
+
 
 # 4.
 # base-DT:
@@ -99,7 +90,11 @@ decision_tree_classifier_penguins.fit(xtrain_penguin, ytrain_penguin)
 # plot the tree
 tree.plot_tree(decision_tree_classifier_penguins, feature_names = xtrain_penguin.columns)
 plt.savefig('penguin_basicDT.png')
-<<<<<<< HEAD
+
+
+
+
+
 
 #(4b) Top-DT
 
@@ -125,34 +120,7 @@ tree.plot_tree(best_tree, filled=True)
 plt.savefig('best_decision_tree.png')
 plt.close()
 
-=======
-<<<<<<< HEAD
 
-#(4b) Top-DT
-
-#setting up parameter Grid
-parameter_grid={
-    'criterion': ['gini', 'entropy'],
-    'max_depth': [None, 10, 20], #just using 10, 20 to see the difference in values
-    'min_samples_split':[5, 10, 20]
-}
-
-#initializes the decision tree classifier
-dt = DecisionTreeClassifier()
-
-grid_search = GridSearchCV(dt, parameter_grid, cv=5, scoring = 'accuracy')
-
-grid_search.fit(xtrain_penguin, ytrain_penguin)
-
-best_tree = grid_search.best_estimator_
-
-plt.figure()
-tree.plot_tree(best_tree, filled=True)
-
-plt.savefig('best_decision_tree.png')
-plt.close()
-
-=======
 plt.show()
 
 # abalone
@@ -165,7 +133,12 @@ decision_tree_classifier_abalone.fit(xtrain_abalone, ytrain_abalone)
 tree.plot_tree(decision_tree_classifier_abalone, feature_names = xtrain_abalone.columns)
 plt.savefig('abalone_basicDT.png')
 
-# BASE-MLP
+
+
+
+
+
+#4c) BASE-MLP
 mlp = MLPClassifier(hidden_layer_sizes=(100, 100), activation = 'logistic', solver = 'sgd')
 mlp.fit(xtrain_abalone, ytrain_abalone)
 prediction = mlp.predict(xtest_abalone)
