@@ -6,6 +6,8 @@
 
 import pandas as pd
 import sklearn
+import sklearn.model_selection as ms
+import sklearn.tree as tree
 import matplotlib.pyplot as plt
 
 # read the .csv files in
@@ -59,21 +61,20 @@ plt.savefig('abalone-classes.png')
 penguin_features = penguins_onehot.drop('species', axis = 1)  
 penguin_labels = penguins_onehot['species']
 
-xtrain_penguin, xtest_penguin, ytrain_penguin, ytest_penguin = sklearn.model_selection.train_test_split(penguin_features, penguin_labels)
+xtrain_penguin, xtest_penguin, ytrain_penguin, ytest_penguin = ms.train_test_split(penguin_features, penguin_labels)
 
 # abalone
-abalone_features = abalone_categorized.drop('sex', axis = 1)  
-abalone_labels = abalone_categorized['sex']
+abalone_features = abalone_categorized.drop('Type', axis = 1)  
+abalone_labels = abalone_categorized['Type']
 
-xtrain_abalone, xtest_abalone, ytrain_abalone, ytest_abalone = sklearn.model_selection.train_test_split(abalone_features, abalone_labels)
+xtrain_abalone, xtest_abalone, ytrain_abalone, ytest_abalone = ms.train_test_split(abalone_features, abalone_labels)
 
 # (4a) base-DT:
 # create the decision tree classifier
-decision_tree_classifier_penguins = sklearn.tree.DecisionTreeClassifier()
+decision_tree_classifier_penguins = tree.DecisionTreeClassifier()
 # fit the training data :)
 decision_tree_classifier_penguins.fit(xtrain_penguin, ytrain_penguin)
 
 # plot the tree
-plt.plot_tree(decision_tree_classifier_penguins, feature_names = xtrain_penguin.columns)
+tree.plot_tree(decision_tree_classifier_penguins, feature_names = xtrain_penguin.columns)
 plt.savefig('penguin_basicDT.png')
-plt.show()
