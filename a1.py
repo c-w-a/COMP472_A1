@@ -2,10 +2,12 @@
 
 # TEAM MEMBERS:
 # Chris Anglin 40216346
-# Stefan Codrean
+# Stefan Codrean 40227929
 # Daniele Comitogianni
 
+import numpy as np
 import pandas as pd
+from sklearn import metrics
 import sklearn.model_selection as ms
 import sklearn.tree as tree
 import matplotlib.pyplot as plt
@@ -13,12 +15,12 @@ from sklearn.tree import DecisionTreeClassifier
 from sklearn.model_selection import GridSearchCV
 from sklearn import tree
 from sklearn.neural_network import MLPClassifier
-from sklearn.metrics import accuracy_score
+
 
 # 1.
 # read the .csv files in
-penguins = pd.read_csv('penguins.csv')
-abalone = pd.read_csv('abalone.csv')
+penguins = pd.read_csv('COMP472_A1/penguins.csv')
+abalone = pd.read_csv('COMP472_A1/abalone.csv')
 
 # do the one-hot encoding for penguins
 penguins_onehot = pd.get_dummies(penguins, columns=['island','sex'])
@@ -77,16 +79,7 @@ abalone_labels = abalone_categorized['Type']
 xtrain_abalone, xtest_abalone, ytrain_abalone, ytest_abalone = ms.train_test_split(abalone_features, abalone_labels)
 
 
-#BASE-MLP
-mlp = MLPClassifier(hidden_layer_sizes=(100, 100), activation = 'logistic', solver = 'sgd', max_iter = 15000)
-mlp.fit(xtrain_abalone, ytrain_abalone)
-prediction = mlp.predict(xtest_abalone)
-
-<<<<<<< HEAD
-
-
-# 4.
-# base-DT:
+############################ 4a) Base-DT:#############################################
 # penguin
 # create the decision tree classifier
 decision_tree_classifier_penguins = tree.DecisionTreeClassifier()
@@ -102,7 +95,7 @@ plt.savefig('penguin_basicDT.png')
 
 
 
-#(4b) Top-DT
+##############################(4b) Top-DT #############################################
 
 #setting up parameter Grid
 parameter_grid={
@@ -144,12 +137,53 @@ plt.savefig('abalone_basicDT.png')
 
 
 
-#4c) BASE-MLP
-mlp = MLPClassifier(hidden_layer_sizes=(100, 100), activation = 'logistic', solver = 'sgd')
-mlp.fit(xtrain_abalone, ytrain_abalone)
-prediction = mlp.predict(xtest_abalone)
-=======
-accuracy = accuracy_score(ytest_abalone, prediction)
-print("Accuracy:", accuracy)
->>>>>>> Base-MLP
+##############################4c) BASE-MLP #############################################
 
+
+mlp_abalone = MLPClassifier(hidden_layer_sizes=(100, 100), activation = 'logistic', solver = 'sgd') #add parameter verbose = True to see the training process, random_state = anyNumber to debug
+mlp_abalone.fit(xtrain_abalone, ytrain_abalone)
+predictions = mlp_abalone.predict(xtest_abalone)
+score = np.round(metrics.accuracy_score(ytest_abalone, predictions), 2)
+print("Mean accuracy score: ", score)
+
+
+mlp_penguin = MLPClassifier(hidden_layer_sizes=(100, 100), activation = 'logistic', solver = 'sgd')
+mlp_penguin.fit(xtrain_penguin, ytrain_penguin)
+prediction = mlp_penguin.predict(xtest_penguin)
+score = np.round(metrics.accuracy_score(ytest_penguin, prediction), 2)    
+print("Mean accuracy score: ", score)
+
+
+###############################4d) TOP-MLP#############################################
+parameters = {
+    'hidden_layer_sizes': [(30, 50), (10, 10, 10)],
+    'activation': ['relu', 'tanh', 'logistic'], 
+    'solver': ['adam', 'sgd']  
+}
+
+
+# abalone data set
+mlp = MLPClassifier()
+
+# Apply GridSearchCV For Abalone
+grid_search_abalone = GridSearchCV(mlp, parameters, cv=3)
+grid_search_abalone.fit(xtrain_abalone, ytrain_abalone)
+
+# Best parameters found by GridSearchCV
+print('Best parameters found:\n', grid_search_abalone.best_params_)
+
+# Best model found by GridSearchCV
+best_model = grid_search_abalone.best_estimator_
+print('Best model:\n', best_model)
+
+
+
+
+# for penguin data set
+mlp = MLPClassifier(max_iter=15000)
+grid_search_penguin = GridSearchCV(mlp, parameters, cv=3)
+grid_search_penguin.fit(xtrain_penguin, ytrain_penguin)
+
+print('Best parameters found:\n', grid_search_penguin.best_params_)
+best_model = grid_search_penguin.best_estimator_
+print('Best model:\n', best_model)
