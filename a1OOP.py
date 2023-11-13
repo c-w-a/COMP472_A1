@@ -15,7 +15,7 @@ from sklearn import model_selection as ms
 from sklearn.model_selection import GridSearchCV as gridsearch
 from sklearn.neural_network import MLPClassifier as mlp
 
-4.
+# 4.
 #############################
 # CLASS DEFINITIONS [for models and metrics] (made them OOP-ish so we can call it multiple times for part 6)
 
@@ -31,8 +31,9 @@ class BaseDT:
     def predict(self, x_test):
         return self.dtc.predict(x_test)
     
-    def plot(self, x_train, depth):
+    def plot(self, x_train, depth, title):
         tree.plot_tree(self.dtc, feature_names=x_train.columns, max_depth=depth)
+        plt.title(title)
         plt.show()
 
 # a class for Top-DT
@@ -57,15 +58,16 @@ class TopDT:
     def get_best_parameters(self):
         return self.best.get_params()
 
-    def plot(self, x_train):
-        tree.plot_tree(self.best, feature_names=x_train.columns)
+    def plot(self, x_train, depth, title):
+        tree.plot_tree(self.best, feature_names=x_train.columns, max_depth=depth)
+        plt.title(title)
         plt.show()
 
 # a class for Base-MLP
 class BaseMLP:
 
-    def __init__(self, activ='logistic'): # added option here to pass in sigmoid (or other)
-        self.mlp = mlp(hidden_layer_sizes=(100, 100), activation=activ, solver='sgd')
+    def __init__(self): 
+        self.mlp = mlp(hidden_layer_sizes=(100, 100), activation='logistic', solver='sgd')
 
     def train(self, x_train, y_train):
         self.mlp.fit(x_train, y_train)
@@ -79,7 +81,7 @@ class TopMLP:
     def __init__(self):
         self.mlp = mlp(max_iter = 2000)
         self.parameter_grid = {
-                'activation': ['sigmoid', 'tanh', 'relu'],
+                'activation': ['logistic', 'tanh', 'relu'],
                 'hidden_layer_sizes': [(77, 37), (37, 77), (120, 80, 120)], # put 3.. was curious to try a pair of 'inverse' and something larger to see what works best
                 'solver': ['adam', 'sgd']  
             }
@@ -113,10 +115,15 @@ class MetricsOutput:
         self.macrof1 = metrics.f1_score(labels, predictions, average='macro')
         self.weightedf1 = metrics.f1_score(labels, predictions, average='weighted')
 
+    def metrics_(self, labels, predictions):
+        self.accuracy = metrics.accuracy_score(labels, predictions)
+        self.macrof1 = metrics.f1_score(labels, predictions, average='macro')
+        self.weightedf1 = metrics.f1_score(labels, predictions, average='weighted')
+
     # this is the method needed for part 5
     def output(self, file):
         file.write('\n\n ******* \n(A) ' + self.name)
-        file.write('\n(B) confusion matrix:\n' + str(self.confusion_matrix))
+        file.write('\n(B) confusion matrix:\n\n' + str(self.confusion_matrix) + '\n')
         file.write('\n(C) precision: ' + str(self.precision) + '\n    recall: ' + str(self.recall) + '\n    f1: ' + str(self.f1))
         file.write('\n(D) accuracy: ' + str(self.accuracy) + '\n    macro-average-f1: ' + str(self.macrof1) + '\n    weighted-average-f1: ' + str(self.weightedf1))
 
@@ -126,6 +133,9 @@ class MetricsOutput:
 
 
 #####################################
+
+
+
 
 # 1.
 # read the .csv files in
@@ -195,12 +205,10 @@ xtrain_abalone, xtest_abalone, ytrain_abalone, ytest_abalone = ms.train_test_spl
 # 4. (is above at the top, the model definitions)
 
 # 5. output metrics
-
 # create models 
 basedt = BaseDT()
 topdt = TopDT()
-basemlp1 = BaseMLP(activ='logistic')
-basemlp2 = BaseMLP(activ='sigmoid')
+basemlp = BaseMLP()
 topmlp = TopMLP()
 
 # create metric manager thing
@@ -211,65 +219,253 @@ basedt.train(xtrain_penguin, ytrain_penguin)
 predictions = basedt.predict(xtest_penguin)
 brains.metrics('Base-DT', ytest_penguin, predictions)
 brains.output(brains.p_file)
-basedt.plot(xtrain_penguin, 'default')
+basedt.plot(xtrain_penguin, None, 'Base DT Penguin')
 
 # Base DT for abalone
 basedt.train(xtrain_abalone, ytrain_abalone)
 predictions = basedt.predict(xtest_abalone)
 brains.metrics('Base-DT', ytest_abalone, predictions)
 brains.output(brains.a_file)
-basedt.plot(xtrain_abalone, 7)
+basedt.plot(xtrain_abalone, 7, 'Base DT Abalone')
 
 # Top DT for penguins
 topdt.train(xtrain_penguin, ytrain_penguin)
 predictions = topdt.predict(xtest_penguin)
-brains.metrics('Top-DT    | best parameters: ' + topdt.get_best_parameters(), ytest_penguin, predictions)
+brains.metrics('Top-DT    | best parameters: ' + str(topdt.get_best_parameters()), ytest_penguin, predictions)
 brains.output(brains.p_file)
-topdt.plot(xtrain_penguin, 'default')
+topdt.plot(xtrain_penguin, None, 'Top DT Penguin')
 
 # Top DT for abalone
 topdt.train(xtrain_abalone, ytrain_abalone)
 predictions = topdt.predict(xtest_abalone)
-brains.metrics('Top-DT    | best parameters: ' + topdt.get_best_parameters(), ytest_abalone, predictions)
+brains.metrics('Top-DT    | best parameters: ' + str(topdt.get_best_parameters()), ytest_abalone, predictions)
 brains.output(brains.a_file)
-topdt.plot(xtrain_abalone, 7)
+topdt.plot(xtrain_abalone, 7, 'Top DT Abalone')
 
-# Base MLP for penguins LOGISTIC
-basemlp1.train(xtrain_penguin, ytrain_penguin)
-predictions = basemlp1.predict(xtest_penguin)
-brains.metrics('Base-MLP [logistic]', ytest_penguin, predictions)
+# Base MLP for penguins
+basemlp.train(xtrain_penguin, ytrain_penguin)
+predictions = basemlp.predict(xtest_penguin)
+brains.metrics('Base-MLP ', ytest_penguin, predictions)
 brains.output(brains.p_file)
 
-# Base MLP for abalone LOGISTIC
-basemlp1.train(xtrain_abalone, ytrain_abalone)
-predictions = basemlp1.predict(xtest_abalone)
-brains.metrics('Base-MLP [logistic]', ytest_abalone, predictions)
-brains.output(brains.a_file)
-
-# Base MLP for penguin SIGMOID
-basemlp2.train(xtrain_penguin, ytrain_penguin)
-predictions = basemlp2.predict(xtest_penguin)
-brains.metrics('Base-MLP [sigmoid]', ytest_penguin, predictions)
-brains.output(brains.p_file)
-
-# Base MLP for abalone SIGMOID
-basemlp2.train(xtrain_abalone, ytrain_abalone)
-predictions = basemlp2.predict(xtest_abalone)
-brains.metrics('Base-MLP [sigmoid]', ytest_abalone, predictions)
+# Base MLP for abalone
+basemlp.train(xtrain_abalone, ytrain_abalone)
+predictions = basemlp.predict(xtest_abalone)
+brains.metrics('Base-MLP ', ytest_abalone, predictions)
 brains.output(brains.a_file)
 
 # Top MLP for penguins
 topmlp.train(xtrain_penguin, ytrain_penguin)
 predictions = topmlp.predict(xtest_penguin)
-brains.metrics('Top-MLP   | best parameters: '+ topmlp.get_best_parameters(), ytest_penguin, predictions)
+brains.metrics('Top-MLP   | best parameters: '+ str(topmlp.get_best_parameters()), ytest_penguin, predictions)
 brains.output(brains.p_file)
 
 # Top MLP for abalone
 topmlp.train(xtrain_abalone, ytrain_abalone)
 predictions = topmlp.predict(xtest_abalone)
-brains.metrics('Top-MLP   | best parameters: ' + topmlp.get_best_parameters(), ytest_abalone, predictions)
+brains.metrics('Top-MLP   | best parameters: ' + str(topmlp.get_best_parameters()), ytest_abalone, predictions)
 brains.output(brains.a_file)
 
-brains.close_files()
+# 6.
+# lists we'll use to gather the info needed
+accuracylist = []
+macroaveragelist = []
+weightedaveragelist = []
 
-# call them some more to get the output for part 6
+for i in range(5):
+# Base DT for penguin
+    basedt.train(xtrain_penguin, ytrain_penguin)
+    predictions = basedt.predict(xtest_penguin)
+    brains.metrics_(ytest_penguin, predictions)
+    # adding these values to the list each time
+    accuracylist.append(brains.accuracy)
+    macroaveragelist.append(brains.macrof1)
+    weightedaveragelist.append(brains.weightedf1)
+
+accavg = np.mean(accuracylist)
+accvar = np.var(accuracylist)
+macavg = np.mean(macroaveragelist)
+macvar = np.var(macroaveragelist)
+weiavg = np.mean(weightedaveragelist)
+weivar = np.var(weightedaveragelist)
+
+brains.p_file.write('\n\n *** BASE DT\n(A) accuracy avg: ' + accavg + '\n     accuracy var: ' + accvar)
+brains.p_file.write('\n(B) macro-f1 avg: ' + macavg + '\n     macro-f1 var: ' + macvar)
+brains.p_file.write('\n(C) weighted avg: ' + weiavg + '\n     weighted var: ' + weivar)
+
+accuracylist = []
+macroaveragelist = []
+weightedaveragelist = []
+
+for i in range(5):
+# Base DT for abalone
+    basedt.train(xtrain_abalone, ytrain_abalone)
+    predictions = basedt.predict(xtest_abalone) 
+    brains.metrics_(ytest_abalone, predictions)
+    # adding these values to the list each time
+    accuracylist.append(brains.accuracy)
+    macroaveragelist.append(brains.macrof1)
+    weightedaveragelist.append(brains.weightedf1)
+
+accavg = np.mean(accuracylist)
+accvar = np.var(accuracylist)
+macavg = np.mean(macroaveragelist)
+macvar = np.var(macroaveragelist)
+weiavg = np.mean(weightedaveragelist)
+weivar = np.var(weightedaveragelist)
+
+brains.a_file.write('\n\n *** BASE DT\n(A) accuracy avg: ' + accavg + '\n     accuracy var: ' + accvar)
+brains.a_file.write('\n(B) macro-f1 avg: ' + macavg + '\n     macro-f1 var: ' + macvar)
+brains.a_file.write('\n(C) weighted avg: ' + weiavg + '\n     weighted var: ' + weivar)
+
+accuracylist = []
+macroaveragelist = []
+weightedaveragelist = []
+
+for i in range(5):
+# Top DT for penguins
+    topdt.train(xtrain_penguin, ytrain_penguin)
+    predictions = topdt.predict(xtest_penguin)
+    brains.metrics_(ytest_penguin, predictions)
+    # adding these values to the list each time
+    accuracylist.append(brains.accuracy)
+    macroaveragelist.append(brains.macrof1)
+    weightedaveragelist.append(brains.weightedf1)
+
+accavg = np.mean(accuracylist)
+accvar = np.var(accuracylist)
+macavg = np.mean(macroaveragelist)
+macvar = np.var(macroaveragelist)
+weiavg = np.mean(weightedaveragelist)
+weivar = np.var(weightedaveragelist)
+
+brains.p_file.write('\n\n *** TOP DT\n(A) accuracy avg: ' + accavg + '\n     accuracy var: ' + accvar)
+brains.p_file.write('\n(B) macro-f1 avg: ' + macavg + '\n     macro-f1 var: ' + macvar)
+brains.p_file.write('\n(C) weighted avg: ' + weiavg + '\n     weighted var: ' + weivar)
+
+accuracylist = []
+macroaveragelist = []
+weightedaveragelist = []
+
+for i in range(5):
+# Top DT for abalone
+    topdt.train(xtrain_abalone, ytrain_abalone)
+    predictions = topdt.predict(xtest_abalone)
+    brains.metrics_(ytest_abalone, predictions)
+    # adding these values to the list each time
+    accuracylist.append(brains.accuracy)
+    macroaveragelist.append(brains.macrof1)
+    weightedaveragelist.append(brains.weightedf1)
+
+accavg = np.mean(accuracylist)
+accvar = np.var(accuracylist)
+macavg = np.mean(macroaveragelist)
+macvar = np.var(macroaveragelist)
+weiavg = np.mean(weightedaveragelist)
+weivar = np.var(weightedaveragelist)
+
+brains.a_file.write('\n\n *** TOP DT\n(A) accuracy avg: ' + accavg + '\n     accuracy var: ' + accvar)
+brains.a_file.write('\n(B) macro-f1 avg: ' + macavg + '\n     macro-f1 var: ' + macvar)
+brains.a_file.write('\n(C) weighted avg: ' + weiavg + '\n     weighted var: ' + weivar)
+
+accuracylist = []
+macroaveragelist = []
+weightedaveragelist = []
+
+for i in range(5):
+# Base MLP for penguins
+    basemlp.train(xtrain_penguin, ytrain_penguin)
+    predictions = basemlp.predict(xtest_penguin)
+    brains.metrics_(ytest_penguin, predictions)
+    # adding these values to the list each time
+    accuracylist.append(brains.accuracy)
+    macroaveragelist.append(brains.macrof1)
+    weightedaveragelist.append(brains.weightedf1)
+
+accavg = np.mean(accuracylist)
+accvar = np.var(accuracylist)
+macavg = np.mean(macroaveragelist)
+macvar = np.var(macroaveragelist)
+weiavg = np.mean(weightedaveragelist)
+weivar = np.var(weightedaveragelist)
+
+brains.p_file.write('\n\n *** BASE MLP\n(A) accuracy avg: ' + accavg + '\n     accuracy var: ' + accvar)
+brains.p_file.write('\n(B) macro-f1 avg: ' + macavg + '\n     macro-f1 var: ' + macvar)
+brains.p_file.write('\n(C) weighted avg: ' + weiavg + '\n     weighted var: ' + weivar)
+
+accuracylist = []
+macroaveragelist = []
+weightedaveragelist = []
+
+for i in range(5):
+# Base MLP for abalone
+    basemlp.train(xtrain_abalone, ytrain_abalone)
+    predictions = basemlp.predict(xtest_abalone)
+    brains.metrics_(ytest_abalone, predictions)
+    # adding these values to the list each time
+    accuracylist.append(brains.accuracy)
+    macroaveragelist.append(brains.macrof1)
+    weightedaveragelist.append(brains.weightedf1)
+
+accavg = np.mean(accuracylist)
+accvar = np.var(accuracylist)
+macavg = np.mean(macroaveragelist)
+macvar = np.var(macroaveragelist)
+weiavg = np.mean(weightedaveragelist)
+weivar = np.var(weightedaveragelist)
+
+brains.a_file.write('\n\n *** BASE MLP\n(A) accuracy avg: ' + accavg + '\n     accuracy var: ' + accvar)
+brains.a_file.write('\n(B) macro-f1 avg: ' + macavg + '\n     macro-f1 var: ' + macvar)
+brains.a_file.write('\n(C) weighted avg: ' + weiavg + '\n     weighted var: ' + weivar)
+
+accuracylist = []
+macroaveragelist = []
+weightedaveragelist = []
+
+for i in range(5):
+# Top MLP for penguins
+    topmlp.train(xtrain_penguin, ytrain_penguin)
+    predictions = topmlp.predict(xtest_penguin)
+    brains.metrics_(ytest_penguin, predictions)
+    # adding these values to the list each time
+    accuracylist.append(brains.accuracy)
+    macroaveragelist.append(brains.macrof1)
+    weightedaveragelist.append(brains.weightedf1)
+
+accavg = np.mean(accuracylist)
+accvar = np.var(accuracylist)
+macavg = np.mean(macroaveragelist)
+macvar = np.var(macroaveragelist)
+weiavg = np.mean(weightedaveragelist)
+weivar = np.var(weightedaveragelist)
+
+brains.p_file.write('\n\n *** TOP MLP\n(A) accuracy avg: ' + accavg + '\n     accuracy var: ' + accvar)
+brains.p_file.write('\n(B) macro-f1 avg: ' + macavg + '\n     macro-f1 var: ' + macvar)
+brains.p_file.write('\n(C) weighted avg: ' + weiavg + '\n     weighted var: ' + weivar)
+
+accuracylist = []
+macroaveragelist = []
+weightedaveragelist = []
+
+for i in range(5):
+# Top MLP for abalone
+    topmlp.train(xtrain_abalone, ytrain_abalone)
+    predictions = topmlp.predict(xtest_abalone)
+    brains.metrics_(ytest_abalone, predictions)
+    # adding these values to the list each time
+    accuracylist.append(brains.accuracy)
+    macroaveragelist.append(brains.macrof1)
+    weightedaveragelist.append(brains.weightedf1)
+
+accavg = np.mean(accuracylist)
+accvar = np.var(accuracylist)
+macavg = np.mean(macroaveragelist)
+macvar = np.var(macroaveragelist)
+weiavg = np.mean(weightedaveragelist)
+weivar = np.var(weightedaveragelist)
+
+brains.a_file.write('\n\n *** TOP MLP\n(A) accuracy avg: ' + accavg + '\n     accuracy var: ' + accvar)
+brains.a_file.write('\n(B) macro-f1 avg: ' + macavg + '\n     macro-f1 var: ' + macvar)
+brains.a_file.write('\n(C) weighted avg: ' + weiavg + '\n     weighted var: ' + weivar)
+      
+brains.close_files()
