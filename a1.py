@@ -141,7 +141,12 @@ grid_search_penguins.fit(xtrain_penguin, ytrain_penguin)
 
 best_tree_penguins = grid_search_penguins.best_estimator_
 
-metrics_output(best_tree_penguins, xtest_penguin, ytest_penguin, p_file, 'TOP-DT (penguin)')
+optimized_top_dt_penguins = dt(best_tree_penguins)
+
+op_base_penguins = optimized_top_dt_penguins.fit(xtrain_penguin, ytrain_penguin)
+
+
+metrics_output(op_base_penguins, xtest_penguin, ytest_penguin, p_file, 'TOP-DT (penguin)')
 
 plt.figure()
 tree.plot_tree(best_tree_penguins, filled=True)
@@ -157,7 +162,12 @@ grid_search_abalone.fit(xtrain_abalone, ytrain_abalone)
 
 best_tree_abalone = grid_search_abalone.best_estimator_
 
-metrics_output(best_tree_abalone, xtest_abalone, ytest_abalone, a_file, 'TOP-DT (abalone)')
+optimized_top_dt_abalone = dt(best_tree_abalone)
+
+op_base_abalone = optimized_top_dt_abalone.fit(xtrain_abalone, ytrain_abalone)
+
+
+metrics_output(op_base_abalone, xtest_abalone, ytest_abalone, a_file, 'TOP-DT (abalone)')
 
 plt.figure()
 tree.plot_tree(best_tree_abalone, filled=True)
@@ -186,27 +196,30 @@ metrics_output(mlp_abalone, xtest_abalone, ytest_abalone, a_file, 'BASE-MLP (aba
 
 ###############################4d) TOP-MLP#############################################
 parameters = {
-    'hidden_layer_sizes': [(30, 50), (10, 10, 10)],
+    'hidden_layer_sizes': [(30, 50), (10, 10, 10), (40,40)],
     'activation': ['relu', 'tanh', 'logistic'], 
     'solver': ['adam', 'sgd']  
 }
 
 # for penguin data set
-mlp = MLPClassifier(max_iter=15000)
-grid_search_penguin = GridSearchCV(mlp, parameters, cv=3)
+mlp = MLPClassifier(max_iter = 2000)
+grid_search_penguin = GridSearchCV(mlp, parameters, cv = 5)
 grid_search_penguin.fit(xtrain_penguin, ytrain_penguin)
-
 print('Best parameters found:\n', grid_search_penguin.best_params_)
 best_model_penguins = grid_search_penguin.best_estimator_
 print('Best model:\n', best_model_penguins)
 
-metrics_output(best_model_penguins, xtest_penguin, ytest_penguin, p_file, 'TOP-MLP (penguins)')
+optimized_top_mlp_penguin = MLPClassifier(best_model_penguins, max_iter = 2000)
+op_top_penguins = optimized_top_mlp_penguin.fit(xtrain_penguin, ytrain_penguin)
+# predictions_penguin_top = optimized_top_mlp_penguin.predict(xtest_penguin)
+
+metrics_output(op_top_penguins, xtest_penguin, ytest_penguin, p_file, 'TOP-MLP (penguins)')
 
 # abalone data set
-mlp = MLPClassifier()
+mlp = MLPClassifier(max_iter = 2000)
 
 # Apply GridSearchCV For Abalone
-grid_search_abalone = GridSearchCV(mlp, parameters, cv=3)
+grid_search_abalone = GridSearchCV(mlp, parameters, cv = 5)
 grid_search_abalone.fit(xtrain_abalone, ytrain_abalone)
 
 # Best parameters found by GridSearchCV
@@ -215,8 +228,12 @@ print('Best parameters found:\n', grid_search_abalone.best_params_)
 # Best model found by GridSearchCV
 best_model_abalone = grid_search_abalone.best_estimator_
 print('Best model:\n', best_model_abalone)
+optimized_top_mlp_abalone = MLPClassifier(best_model_abalone, max_iter = 2000)
+optimized_top_mlp_abalone.fit(xtrain_penguin, ytrain_penguin)
+op_top_abalone = optimized_top_mlp_abalone.fit(xtrain_abalone, ytrain_abalone)
 
-metrics_output(best_model_abalone, xtest_abalone, ytest_abalone, a_file, 'TOP-MLP (abalone)')
+
+metrics_output(op_top_abalone, xtest_abalone, ytest_abalone, a_file, 'TOP-MLP (abalone)')
 
 p_file.close()
 a_file.close()
