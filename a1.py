@@ -172,7 +172,7 @@ metrics_output(op_base_abalone, xtest_abalone, ytest_abalone, a_file, 'TOP-DT (a
 plt.figure()
 tree.plot_tree(best_tree_abalone, filled=True)
 
-plt.savefig('best_decision_tree_penguin.png')
+plt.savefig('best_decision_tree_abalone.png')
 plt.close()
 
 
