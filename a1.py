@@ -78,6 +78,27 @@ abalone_features = abalone_categorized.drop('Type', axis=1)
 abalone_labels = abalone_categorized['Type']
 xtrain_abalone, xtest_abalone, ytrain_abalone, ytest_abalone = ms.train_test_split(abalone_features, abalone_labels)
 
+# !!!!!
+
+# create files to write to
+p_file = open('penguin-performance.txt', 'a')
+a_file = open('abalone-performance.txt', 'a')
+
+def metrics_output(model, x_test, y_test, file, name):
+    y_predictions = model.predict(x_test)
+
+    confusion_matrix = metrics.confusion_matrix(y_test, y_predictions)
+    precision = metrics.precision_score(y_test, y_predictions, average=None)
+    recall = metrics.recall_score(y_test, y_predictions, average=None)
+    f1 = metrics.recall_score(y_test, y_predictions, average=None)
+    accuracy = metrics.accuracy_score(y_test, y_predictions)
+    macrof1 = metrics.f1_score(y_test, y_predictions, average='macro')
+    weightedf1 = metrics.f1_score(y_test, y_predictions, average='weighted')
+
+    file.write('\n\n\n!!! ******* !!!\n(A) ' + name)
+    file.write('\n(B) confusion matrix: \n   ' + str(confusion_matrix))
+    file.write('\n(C) precision: ' + str(precision) + ' recall: ' + str(recall) + ' f1: ' + str(f1))
+    file.write('\n(D) accuracy: ' + str(accuracy) + ' macro-average-f1: ' + str(macrof1) + ' weighted-average-f1: ' + str(weightedf1))
 
 ############################ 4a) Base-DT:#############################################
 # penguin
@@ -86,15 +107,23 @@ decision_tree_classifier_penguins = tree.DecisionTreeClassifier()
 # fit the training data :)
 decision_tree_classifier_penguins.fit(xtrain_penguin, ytrain_penguin)
 
+metrics_output(decision_tree_classifier_penguins, xtest_penguin, ytest_penguin, p_file, 'BASE-DT (penguins)')
+
 # plot the tree
 tree.plot_tree(decision_tree_classifier_penguins, feature_names = xtrain_penguin.columns)
 plt.savefig('penguin_basicDT.png')
 
+# abalone
+# create a decision tree classifier
+decision_tree_classifier_abalone = tree.DecisionTreeClassifier()
+# fit the training data :)
+decision_tree_classifier_abalone.fit(xtrain_abalone, ytrain_abalone)
 
+metrics_output(decision_tree_classifier_abalone, xtest_abalone, ytest_abalone, a_file, 'BASE-DT (abalone)')
 
-
-
-
+# plot the tree (i tried some different max depths to get a legible looking tree, kind of cool just to see the full tree though)
+tree.plot_tree(decision_tree_classifier_abalone, feature_names = xtrain_abalone.columns)
+plt.savefig('abalone_basicDT.png')
 ##############################(4b) Top-DT #############################################
 
 #setting up parameter Grid
@@ -107,45 +136,38 @@ parameter_grid={
 #initializes the decision tree classifier
 dt = DecisionTreeClassifier()
 
-grid_search = GridSearchCV(dt, parameter_grid, cv=5, scoring = 'accuracy')
+grid_search_penguins = GridSearchCV(dt, parameter_grid, cv=5, scoring = 'accuracy')
 
-grid_search.fit(xtrain_penguin, ytrain_penguin)
+grid_search_penguins.fit(xtrain_penguin, ytrain_penguin)
 
-best_tree = grid_search.best_estimator_
+best_tree_penguins = grid_search_penguins.best_estimator_
+
+metrics_output(best_tree_penguins, xtest_penguin, ytest_penguin, p_file, 'TOP-DT (penguin)')
 
 plt.figure()
-tree.plot_tree(best_tree, filled=True)
+tree.plot_tree(best_tree_penguins, filled=True)
 
-plt.savefig('best_decision_tree.png')
+plt.savefig('best_decision_tree_penguin.png')
+plt.close()
+
+dt = DecisionTreeClassifier()
+
+grid_search_abalone = GridSearchCV(dt, parameter_grid, cv=5, scoring = 'accuracy')
+
+grid_search_abalone.fit(xtrain_abalone, ytrain_abalone)
+
+best_tree_abalone = grid_search_abalone.best_estimator_
+
+metrics_output(best_tree_abalone, xtest_abalone, ytest_abalone, a_file, 'TOP-DT (abalone)')
+
+plt.figure()
+tree.plot_tree(best_tree_abalone, filled=True)
+
+plt.savefig('best_decision_tree_penguin.png')
 plt.close()
 
 
-plt.show()
-
-# abalone
-# create a decision tree classifier
-decision_tree_classifier_abalone = tree.DecisionTreeClassifier()
-# fit the training data :)
-decision_tree_classifier_abalone.fit(xtrain_abalone, ytrain_abalone)
-
-# plot the tree (i tried some different max depths to get a legible looking tree, kind of cool just to see the full tree though)
-tree.plot_tree(decision_tree_classifier_abalone, feature_names = xtrain_abalone.columns)
-plt.savefig('abalone_basicDT.png')
-
-
-
-
-
-
 ##############################4c) BASE-MLP #############################################
-
-
-mlp_abalone = MLPClassifier(hidden_layer_sizes=(100, 100), activation = 'logistic', solver = 'sgd') #add parameter verbose = True to see the training process, random_state = anyNumber to debug
-mlp_abalone.fit(xtrain_abalone, ytrain_abalone)
-predictions = mlp_abalone.predict(xtest_abalone)
-score = np.round(metrics.accuracy_score(ytest_abalone, predictions), 2)
-print("Mean accuracy score: ", score)
-
 
 mlp_penguin = MLPClassifier(hidden_layer_sizes=(100, 100), activation = 'logistic', solver = 'sgd')
 mlp_penguin.fit(xtrain_penguin, ytrain_penguin)
@@ -153,6 +175,15 @@ prediction = mlp_penguin.predict(xtest_penguin)
 score = np.round(metrics.accuracy_score(ytest_penguin, prediction), 2)    
 print("Mean accuracy score: ", score)
 
+metrics_output(mlp_penguin, xtest_penguin, ytest_penguin, p_file, 'BASE-MLP (penguins)')
+
+mlp_abalone = MLPClassifier(hidden_layer_sizes=(100, 100), activation = 'logistic', solver = 'sgd') #add parameter verbose = True to see the training process, random_state = anyNumber to debug
+mlp_abalone.fit(xtrain_abalone, ytrain_abalone)
+predictions = mlp_abalone.predict(xtest_abalone)
+score = np.round(metrics.accuracy_score(ytest_abalone, predictions), 2)
+print("Mean accuracy score: ", score)
+
+metrics_output(mlp_abalone, xtest_abalone, ytest_abalone, a_file, 'BASE-MLP (abalone)')
 
 ###############################4d) TOP-MLP#############################################
 parameters = {
@@ -161,6 +192,16 @@ parameters = {
     'solver': ['adam', 'sgd']  
 }
 
+# for penguin data set
+mlp = MLPClassifier(max_iter=15000)
+grid_search_penguin = GridSearchCV(mlp, parameters, cv=3)
+grid_search_penguin.fit(xtrain_penguin, ytrain_penguin)
+
+print('Best parameters found:\n', grid_search_penguin.best_params_)
+best_model_penguins = grid_search_penguin.best_estimator_
+print('Best model:\n', best_model_penguins)
+
+metrics_output(best_model_penguins, xtest_penguin, ytest_penguin, p_file, 'TOP-MLP (penguins)')
 
 # abalone data set
 mlp = MLPClassifier()
@@ -173,17 +214,10 @@ grid_search_abalone.fit(xtrain_abalone, ytrain_abalone)
 print('Best parameters found:\n', grid_search_abalone.best_params_)
 
 # Best model found by GridSearchCV
-best_model = grid_search_abalone.best_estimator_
-print('Best model:\n', best_model)
+best_model_abalone = grid_search_abalone.best_estimator_
+print('Best model:\n', best_model_abalone)
 
+metrics_output(best_model_abalone, xtest_abalone, ytest_abalone, a_file, 'TOP-MLP (abalone)')
 
-
-
-# for penguin data set
-mlp = MLPClassifier(max_iter=15000)
-grid_search_penguin = GridSearchCV(mlp, parameters, cv=3)
-grid_search_penguin.fit(xtrain_penguin, ytrain_penguin)
-
-print('Best parameters found:\n', grid_search_penguin.best_params_)
-best_model = grid_search_penguin.best_estimator_
-print('Best model:\n', best_model)
+p_file.close()
+a_file.close()
