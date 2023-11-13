@@ -15,6 +15,7 @@ from sklearn import model_selection as ms
 from sklearn.model_selection import GridSearchCV as gridsearch
 from sklearn.neural_network import MLPClassifier as mlp
 
+4.
 #############################
 # CLASS DEFINITIONS [for models and metrics] (made them OOP-ish so we can call it multiple times for part 6)
 
@@ -30,14 +31,14 @@ class BaseDT:
     def predict(self, x_test):
         return self.dtc.predict(x_test)
     
-    def plot(self, x_train, filename):
-        tree.plot_tree(self.dtc, feature_names=x_train.columns)
-        plt.savefig(filename + '.png')
+    def plot(self, x_train, depth):
+        tree.plot_tree(self.dtc, feature_names=x_train.columns, max_depth=depth)
+        plt.show()
 
 # a class for Top-DT
 class TopDT:
 
-    def __init__(self, p_grid):
+    def __init__(self):
         self.dtc = tree.DecisionTreeClassifier()
         self.parameter_grid = {
             'criterion': ['gini', 'entropy'],
@@ -56,9 +57,9 @@ class TopDT:
     def get_best_parameters(self):
         return self.best.get_params()
 
-    def plot(self, x_train, filename):
+    def plot(self, x_train):
         tree.plot_tree(self.best, feature_names=x_train.columns)
-        plt.savefig(filename + '.png')
+        plt.show()
 
 # a class for Base-MLP
 class BaseMLP:
@@ -75,7 +76,7 @@ class BaseMLP:
 # a class for Top-MLP
 class TopMLP:
 
-    def __init__(self, p_grid):
+    def __init__(self):
         self.mlp = mlp(max_iter = 2000)
         self.parameter_grid = {
                 'activation': ['sigmoid', 'tanh', 'relu'],
@@ -99,7 +100,8 @@ class TopMLP:
 class MetricsOutput:
 
     def __init__(self):
-        self.file = open('metrics[COMP472 A1].txt', 'a')
+        self.p_file = open('penguin-performance.txt', 'w')
+        self.a_file = open('abalone-performance.txt', 'w')
     
     def metrics(self, model_name, labels, predictions):
         self.name = model_name
@@ -112,16 +114,162 @@ class MetricsOutput:
         self.weightedf1 = metrics.f1_score(labels, predictions, average='weighted')
 
     # this is the method needed for part 5
-    def output(self):
-        self.file.write('\n\n!!! ******* !!!\n(A) ' + self.name)
-        self.file.write('\n(B) confusion matrix:\n' + str(self.confusion_matrix))
-        self.file.write('\n(C) precision: ' + str(self.precision) + '\n    recall: ' + str(self.recall) + '\n    f1: ' + str(self.f1))
-        self.file.write('\n(D) accuracy: ' + str(self.accuracy) + '\n    macro-average-f1: ' + str(self.macrof1) + '\n    weighted-average-f1: ' + str(self.weightedf1))
+    def output(self, file):
+        file.write('\n\n ******* \n(A) ' + self.name)
+        file.write('\n(B) confusion matrix:\n' + str(self.confusion_matrix))
+        file.write('\n(C) precision: ' + str(self.precision) + '\n    recall: ' + str(self.recall) + '\n    f1: ' + str(self.f1))
+        file.write('\n(D) accuracy: ' + str(self.accuracy) + '\n    macro-average-f1: ' + str(self.macrof1) + '\n    weighted-average-f1: ' + str(self.weightedf1))
+
+    def close_files(self):
+        self.p_file.close()
+        self.a_file.close()
+
 
 #####################################
 
-# we can move the scripting stuff over here to process the data 
+# 1.
+# read the .csv files in
+penguins = pd.read_csv('COMP472_A1/penguins.csv')
+abalone = pd.read_csv('COMP472_A1/abalone.csv')
 
-# we can call the above methods to get the output for part 5
+# do the one-hot encoding for penguins
+penguins_onehot = pd.get_dummies(penguins, columns=['island','sex'])
+
+# do the manual categorization for penguins
+penguins_categorized = penguins
+penguins_categorized['island'] = pd.Categorical(penguins_categorized['island'])
+penguins_categorized['sex'] = pd.Categorical(penguins_categorized['sex'])
+
+penguins_categorized['island'] = penguins_categorized['island'].cat.codes
+penguins_categorized['sex'] = penguins_categorized['sex'].cat.codes
+
+# do the catergorization for abalone (looks like Type needs to be made numerical)
+abalone_categorized = abalone
+
+abalone_categorized['Type'] = pd.Categorical(abalone_categorized['Type']) # make string categorical
+
+abalone_categorized['Type']  = abalone_categorized['Type'].cat.codes # make values numerical
+
+# i am just going to check that the changes are looking okay
+print('checking the encodings: ')
+print(penguins_onehot.head())
+print(penguins_categorized.head())
+print(abalone_categorized.head())
+
+# 2.
+# plotting the species percentage distribution for penguins
+penguins_species_counts = penguins_onehot['species'].value_counts(normalize=True)*100
+plt.figure()
+penguins_species_counts.plot(kind='bar')
+plt.title("Penguin Species")
+plt.xlabel('Species')
+plt.ylabel('Percentages')
+plt.title('Penguin Classes')
+plt.savefig('penguin-classes.png')
+plt.close()
+
+# plotting the sex percentage distribution for abalone
+abalone_sex_counts = abalone_categorized['Type'].value_counts(normalize=True)*100
+plt.figure()
+abalone_sex_counts.plot(kind='bar')
+plt.title("Abalone Sex")
+plt.xlabel('Sex')
+plt.xticks(ticks=[0,1,2],labels=['Female','Infant','Male'])
+plt.ylabel('Percentages')
+plt.title('Abalone Classes')
+plt.savefig('abalone-classes.png')
+plt.close()
+
+# 3.
+# split datasets up for training and test:
+# penguin 
+penguin_features = penguins_onehot.drop('species', axis = 1)  
+penguin_labels = penguins_onehot['species']
+xtrain_penguin, xtest_penguin, ytrain_penguin, ytest_penguin = ms.train_test_split(penguin_features, penguin_labels)
+
+# abalone
+abalone_features = abalone_categorized.drop('Type', axis=1)  
+abalone_labels = abalone_categorized['Type']
+xtrain_abalone, xtest_abalone, ytrain_abalone, ytest_abalone = ms.train_test_split(abalone_features, abalone_labels)
+
+# 4. (is above at the top, the model definitions)
+
+# 5. output metrics
+
+# create models 
+basedt = BaseDT()
+topdt = TopDT()
+basemlp1 = BaseMLP(activ='logistic')
+basemlp2 = BaseMLP(activ='sigmoid')
+topmlp = TopMLP()
+
+# create metric manager thing
+brains = MetricsOutput()
+
+# Base DT for penguin
+basedt.train(xtrain_penguin, ytrain_penguin)
+predictions = basedt.predict(xtest_penguin)
+brains.metrics('Base-DT', ytest_penguin, predictions)
+brains.output(brains.p_file)
+basedt.plot(xtrain_penguin, 'default')
+
+# Base DT for abalone
+basedt.train(xtrain_abalone, ytrain_abalone)
+predictions = basedt.predict(xtest_abalone)
+brains.metrics('Base-DT', ytest_abalone, predictions)
+brains.output(brains.a_file)
+basedt.plot(xtrain_abalone, 7)
+
+# Top DT for penguins
+topdt.train(xtrain_penguin, ytrain_penguin)
+predictions = topdt.predict(xtest_penguin)
+brains.metrics('Top-DT    | best parameters: ' + topdt.get_best_parameters(), ytest_penguin, predictions)
+brains.output(brains.p_file)
+topdt.plot(xtrain_penguin, 'default')
+
+# Top DT for abalone
+topdt.train(xtrain_abalone, ytrain_abalone)
+predictions = topdt.predict(xtest_abalone)
+brains.metrics('Top-DT    | best parameters: ' + topdt.get_best_parameters(), ytest_abalone, predictions)
+brains.output(brains.a_file)
+topdt.plot(xtrain_abalone, 7)
+
+# Base MLP for penguins LOGISTIC
+basemlp1.train(xtrain_penguin, ytrain_penguin)
+predictions = basemlp1.predict(xtest_penguin)
+brains.metrics('Base-MLP [logistic]', ytest_penguin, predictions)
+brains.output(brains.p_file)
+
+# Base MLP for abalone LOGISTIC
+basemlp1.train(xtrain_abalone, ytrain_abalone)
+predictions = basemlp1.predict(xtest_abalone)
+brains.metrics('Base-MLP [logistic]', ytest_abalone, predictions)
+brains.output(brains.a_file)
+
+# Base MLP for penguin SIGMOID
+basemlp2.train(xtrain_penguin, ytrain_penguin)
+predictions = basemlp2.predict(xtest_penguin)
+brains.metrics('Base-MLP [sigmoid]', ytest_penguin, predictions)
+brains.output(brains.p_file)
+
+# Base MLP for abalone SIGMOID
+basemlp2.train(xtrain_abalone, ytrain_abalone)
+predictions = basemlp2.predict(xtest_abalone)
+brains.metrics('Base-MLP [sigmoid]', ytest_abalone, predictions)
+brains.output(brains.a_file)
+
+# Top MLP for penguins
+topmlp.train(xtrain_penguin, ytrain_penguin)
+predictions = topmlp.predict(xtest_penguin)
+brains.metrics('Top-MLP   | best parameters: '+ topmlp.get_best_parameters(), ytest_penguin, predictions)
+brains.output(brains.p_file)
+
+# Top MLP for abalone
+topmlp.train(xtrain_abalone, ytrain_abalone)
+predictions = topmlp.predict(xtest_abalone)
+brains.metrics('Top-MLP   | best parameters: ' + topmlp.get_best_parameters(), ytest_abalone, predictions)
+brains.output(brains.a_file)
+
+brains.close_files()
 
 # call them some more to get the output for part 6
