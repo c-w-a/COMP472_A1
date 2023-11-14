@@ -289,9 +289,9 @@ macvar = np.var(macroaveragelist)
 weiavg = np.mean(weightedaveragelist)
 weivar = np.var(weightedaveragelist)
 
-brains.p_file.write('\n\n *** BASE DT\n(A) accuracy avg: ' + accavg + '\n     accuracy var: ' + accvar)
-brains.p_file.write('\n(B) macro-f1 avg: ' + macavg + '\n     macro-f1 var: ' + macvar)
-brains.p_file.write('\n(C) weighted avg: ' + weiavg + '\n     weighted var: ' + weivar)
+brains.p_file.write('\n\n *** BASE DT\n(A) accuracy avg: ' + str(accavg) + '\n     accuracy var: ' + str(accvar))
+brains.p_file.write('\n(B) macro-f1 avg: ' + str(macavg) + '\n     macro-f1 var: ' + str(macvar))
+brains.p_file.write('\n(C) weighted avg: ' + str(weiavg) + '\n     weighted var: ' + str(weivar))
 
 accuracylist = []
 macroaveragelist = []
@@ -314,9 +314,9 @@ macvar = np.var(macroaveragelist)
 weiavg = np.mean(weightedaveragelist)
 weivar = np.var(weightedaveragelist)
 
-brains.a_file.write('\n\n *** BASE DT\n(A) accuracy avg: ' + accavg + '\n     accuracy var: ' + accvar)
-brains.a_file.write('\n(B) macro-f1 avg: ' + macavg + '\n     macro-f1 var: ' + macvar)
-brains.a_file.write('\n(C) weighted avg: ' + weiavg + '\n     weighted var: ' + weivar)
+brains.a_file.write('\n\n *** BASE DT\n(A) accuracy avg: ' + str(accavg) + '\n     accuracy var: ' + str(accvar))
+brains.a_file.write('\n(B) macro-f1 avg: ' + str(macavg) + '\n     macro-f1 var: ' + str(macvar))
+brains.a_file.write('\n(C) weighted avg: ' + str(weiavg) + '\n     weighted var: ' + str(weivar))
 
 accuracylist = []
 macroaveragelist = []
@@ -339,9 +339,9 @@ macvar = np.var(macroaveragelist)
 weiavg = np.mean(weightedaveragelist)
 weivar = np.var(weightedaveragelist)
 
-brains.p_file.write('\n\n *** TOP DT\n(A) accuracy avg: ' + accavg + '\n     accuracy var: ' + accvar)
-brains.p_file.write('\n(B) macro-f1 avg: ' + macavg + '\n     macro-f1 var: ' + macvar)
-brains.p_file.write('\n(C) weighted avg: ' + weiavg + '\n     weighted var: ' + weivar)
+brains.p_file.write('\n\n *** TOP DT\n(A) accuracy avg: ' + str(accavg) + '\n     accuracy var: ' + str(accvar))
+brains.p_file.write('\n(B) macro-f1 avg: ' + str(macavg) + '\n     macro-f1 var: ' + str(macvar))
+brains.p_file.write('\n(C) weighted avg: ' + str(weiavg) + '\n     weighted var: ' + str(weivar))
 
 accuracylist = []
 macroaveragelist = []
@@ -364,9 +364,9 @@ macvar = np.var(macroaveragelist)
 weiavg = np.mean(weightedaveragelist)
 weivar = np.var(weightedaveragelist)
 
-brains.a_file.write('\n\n *** TOP DT\n(A) accuracy avg: ' + accavg + '\n     accuracy var: ' + accvar)
-brains.a_file.write('\n(B) macro-f1 avg: ' + macavg + '\n     macro-f1 var: ' + macvar)
-brains.a_file.write('\n(C) weighted avg: ' + weiavg + '\n     weighted var: ' + weivar)
+brains.a_file.write('\n\n *** TOP DT\n(A) accuracy avg: ' + str(accavg) + '\n     accuracy var: ' + str(accvar))
+brains.a_file.write('\n(B) macro-f1 avg: ' + str(macavg) + '\n     macro-f1 var: ' + str(macvar))
+brains.a_file.write('\n(C) weighted avg: ' + str(weiavg) + '\n     weighted var: ' + str(weivar))
 
 accuracylist = []
 macroaveragelist = []
@@ -389,9 +389,9 @@ macvar = np.var(macroaveragelist)
 weiavg = np.mean(weightedaveragelist)
 weivar = np.var(weightedaveragelist)
 
-brains.p_file.write('\n\n *** BASE MLP\n(A) accuracy avg: ' + accavg + '\n     accuracy var: ' + accvar)
-brains.p_file.write('\n(B) macro-f1 avg: ' + macavg + '\n     macro-f1 var: ' + macvar)
-brains.p_file.write('\n(C) weighted avg: ' + weiavg + '\n     weighted var: ' + weivar)
+brains.p_file.write('\n\n *** BASE MLP\n(A) accuracy avg: ' + str(accavg) + '\n     accuracy var: ' + str(accvar))
+brains.p_file.write('\n(B) macro-f1 avg: ' + str(macavg) + '\n     macro-f1 var: ' + str(macvar))
+brains.p_file.write('\n(C) weighted avg: ' + str(weiavg) + '\n     weighted var: ' + str(weivar))
 
 accuracylist = []
 macroaveragelist = []
@@ -414,9 +414,9 @@ macvar = np.var(macroaveragelist)
 weiavg = np.mean(weightedaveragelist)
 weivar = np.var(weightedaveragelist)
 
-brains.a_file.write('\n\n *** BASE MLP\n(A) accuracy avg: ' + accavg + '\n     accuracy var: ' + accvar)
-brains.a_file.write('\n(B) macro-f1 avg: ' + macavg + '\n     macro-f1 var: ' + macvar)
-brains.a_file.write('\n(C) weighted avg: ' + weiavg + '\n     weighted var: ' + weivar)
+brains.a_file.write('\n\n *** BASE MLP\n(A) accuracy avg: ' + str(accavg) + '\n     accuracy var: ' + str(accvar))
+brains.a_file.write('\n(B) macro-f1 avg: ' + str(macavg) + '\n     macro-f1 var: ' + str(macvar))
+brains.a_file.write('\n(C) weighted avg: ' + str(weiavg) + '\n     weighted var: ' + str(weivar))
 
 accuracylist = []
 macroaveragelist = []
@@ -439,9 +439,9 @@ macvar = np.var(macroaveragelist)
 weiavg = np.mean(weightedaveragelist)
 weivar = np.var(weightedaveragelist)
 
-brains.p_file.write('\n\n *** TOP MLP\n(A) accuracy avg: ' + accavg + '\n     accuracy var: ' + accvar)
-brains.p_file.write('\n(B) macro-f1 avg: ' + macavg + '\n     macro-f1 var: ' + macvar)
-brains.p_file.write('\n(C) weighted avg: ' + weiavg + '\n     weighted var: ' + weivar)
+brains.p_file.write('\n\n *** TOP MLP\n(A) accuracy avg: ' + str(accavg) + '\n     accuracy var: ' + str(accvar))
+brains.p_file.write('\n(B) macro-f1 avg: ' + str(macavg) + '\n     macro-f1 var: ' + str(macvar))
+brains.p_file.write('\n(C) weighted avg: ' + str(weiavg) + '\n     weighted var: ' + str(weivar))
 
 accuracylist = []
 macroaveragelist = []
@@ -464,8 +464,8 @@ macvar = np.var(macroaveragelist)
 weiavg = np.mean(weightedaveragelist)
 weivar = np.var(weightedaveragelist)
 
-brains.a_file.write('\n\n *** TOP MLP\n(A) accuracy avg: ' + accavg + '\n     accuracy var: ' + accvar)
-brains.a_file.write('\n(B) macro-f1 avg: ' + macavg + '\n     macro-f1 var: ' + macvar)
-brains.a_file.write('\n(C) weighted avg: ' + weiavg + '\n     weighted var: ' + weivar)
+brains.a_file.write('\n\n *** TOP MLP\n(A) accuracy avg: ' + str(accavg) + '\n     accuracy var: ' + str(accvar))
+brains.a_file.write('\n(B) macro-f1 avg: ' + str(macavg) + '\n     macro-f1 var: ' + str(macvar))
+brains.a_file.write('\n(C) weighted avg: ' + str(weiavg) + '\n     weighted var: ' + str(weivar))
       
 brains.close_files()

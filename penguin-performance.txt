@@ -1,0 +1,93 @@
+
+
+ ******* 
+(A) Base-DT
+(B) confusion matrix:
+
+[[42  1  0]
+ [ 0 15  0]
+ [ 0  0 26]]
+
+(C) precision: [1.     0.9375 1.    ]
+    recall: [0.97674419 1.         1.        ]
+    f1: [0.97674419 1.         1.        ]
+(D) accuracy: 0.9880952380952381
+    macro-average-f1: 0.985325743200506
+    weighted-average-f1: 0.98821722237282
+
+ ******* 
+(A) Top-DT    | best parameters: {'ccp_alpha': 0.0, 'class_weight': None, 'criterion': 'gini', 'max_depth': 20, 'max_features': None, 'max_leaf_nodes': None, 'min_impurity_decrease': 0.0, 'min_samples_leaf': 1, 'min_samples_split': 3, 'min_weight_fraction_leaf': 0.0, 'random_state': None, 'splitter': 'best'}
+(B) confusion matrix:
+
+[[42  1  0]
+ [ 1 14  0]
+ [ 0  0 26]]
+
+(C) precision: [0.97674419 0.93333333 1.        ]
+    recall: [0.97674419 0.93333333 1.        ]
+    f1: [0.97674419 0.93333333 1.        ]
+(D) accuracy: 0.9761904761904762
+    macro-average-f1: 0.9700258397932817
+    weighted-average-f1: 0.9761904761904762
+
+ ******* 
+(A) Base-MLP 
+(B) confusion matrix:
+
+[[43  0  0]
+ [15  0  0]
+ [26  0  0]]
+
+(C) precision: [0.51190476 0.         0.        ]
+    recall: [1. 0. 0.]
+    f1: [1. 0. 0.]
+(D) accuracy: 0.5119047619047619
+    macro-average-f1: 0.22572178477690288
+    weighted-average-f1: 0.34664416947881516
+
+ ******* 
+(A) Top-MLP   | best parameters: {'activation': 'logistic', 'alpha': 0.0001, 'batch_size': 'auto', 'beta_1': 0.9, 'beta_2': 0.999, 'early_stopping': False, 'epsilon': 1e-08, 'hidden_layer_sizes': (120, 80, 120), 'learning_rate': 'constant', 'learning_rate_init': 0.001, 'max_fun': 15000, 'max_iter': 2000, 'momentum': 0.9, 'n_iter_no_change': 10, 'nesterovs_momentum': True, 'power_t': 0.5, 'random_state': None, 'shuffle': True, 'solver': 'adam', 'tol': 0.0001, 'validation_fraction': 0.1, 'verbose': False, 'warm_start': False}
+(B) confusion matrix:
+
+[[38  0  5]
+ [15  0  0]
+ [ 1  0 25]]
+
+(C) precision: [0.7037037  0.         0.83333333]
+    recall: [0.88372093 0.         0.96153846]
+    f1: [0.88372093 0.         0.96153846]
+(D) accuracy: 0.75
+    macro-average-f1: 0.5587874324987727
+    weighted-average-f1: 0.6774405638544078
+
+ *** BASE DT
+(A) accuracy avg: 0.9738095238095239
+     accuracy var: 0.00019274376417233646
+(B) macro-f1 avg: 0.9704163518541193
+     macro-f1 var: 0.00023491301265222752
+(C) weighted avg: 0.973928966513238
+     weighted var: 0.00019231685294858865
+
+ *** TOP DT
+(A) accuracy avg: 0.9690476190476189
+     accuracy var: 0.00014739229024943366
+(B) macro-f1 avg: 0.9630442133141642
+     macro-f1 var: 0.000178695413298482
+(C) weighted avg: 0.9690339865081574
+     weighted var: 0.00014544635403887057
+
+ *** BASE MLP
+(A) accuracy avg: 0.5119047619047619
+     accuracy var: 0.0
+(B) macro-f1 avg: 0.2257217847769029
+     macro-f1 var: 7.703719777548943e-34
+(C) weighted avg: 0.34664416947881516
+     weighted var: 0.0
+
+ *** TOP MLP
+(A) accuracy avg: 0.5642857142857143
+     accuracy var: 0.028718820861678006
+(B) macro-f1 avg: 0.3417814187367993
+     macro-f1 var: 0.030667804507490952
+(C) weighted avg: 0.4367849725854976
+     weighted var: 0.04373608607805104

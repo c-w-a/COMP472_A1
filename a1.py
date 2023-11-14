@@ -26,12 +26,12 @@ abalone = pd.read_csv('COMP472_A1/abalone.csv')
 penguins_onehot = pd.get_dummies(penguins, columns=['island','sex'])
 
 # do the manual categorization for penguins
-penguins_manual = penguins
-penguins_manual['island'] = pd.Categorical(penguins_manual['island'])
-penguins_manual['sex'] = pd.Categorical(penguins_manual['sex'])
+penguins_categorized = penguins
+penguins_categorized['island'] = pd.Categorical(penguins_categorized['island'])
+penguins_categorized['sex'] = pd.Categorical(penguins_categorized['sex'])
 
-penguins_manual['island'] = penguins_manual['island'].cat.codes
-penguins_manual['sex'] = penguins_manual['sex'].cat.codes
+penguins_categorized['island'] = penguins_categorized['island'].cat.codes
+penguins_categorized['sex'] = penguins_categorized['sex'].cat.codes
 
 # do the catergorization for abalone (looks like Type needs to be made numerical)
 abalone_categorized = abalone
@@ -42,7 +42,7 @@ abalone_categorized['Type']  = abalone_categorized['Type'].cat.codes # make valu
 
 # i am just going to save the .csv's and take a look that the changes are looking okay
 penguins_onehot.to_csv('penguins_onehot.csv')
-penguins_manual.to_csv('penguins_manual.csv')
+penguins_categorized.to_csv('penguins_manual.csv')
 abalone_categorized.to_csv('abelone_categorized.csv')
 
 # 2.
@@ -78,7 +78,6 @@ abalone_features = abalone_categorized.drop('Type', axis=1)
 abalone_labels = abalone_categorized['Type']
 xtrain_abalone, xtest_abalone, ytrain_abalone, ytest_abalone = ms.train_test_split(abalone_features, abalone_labels)
 
-# !!!!!
 # create files to write to
 p_file = open('penguin-performance.txt', 'a')
 a_file = open('abalone-performance.txt', 'a')
@@ -94,7 +93,7 @@ def metrics_output(model, x_test, y_test, file, name):
     macrof1 = metrics.f1_score(y_test, y_predictions, average='macro')
     weightedf1 = metrics.f1_score(y_test, y_predictions, average='weighted')
 
-    file.write('\n\n\n!!! ******* !!!\n(A) ' + name)
+    file.write('\n\n!!! ******* !!!\n(A) ' + name)
     file.write('\n(B) confusion matrix: \n   ' + str(confusion_matrix))
     file.write('\n(C) precision: ' + str(precision) + ' recall: ' + str(recall) + ' f1: ' + str(f1))
     file.write('\n(D) accuracy: ' + str(accuracy) + ' macro-average-f1: ' + str(macrof1) + ' weighted-average-f1: ' + str(weightedf1))
